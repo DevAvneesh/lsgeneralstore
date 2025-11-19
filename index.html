@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LS जनरल स्टोर - गाँव का अपना भरोसा</title>
+    <!-- Tailwind CSS for Responsive Design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Hind for beautiful Hindi typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Hind', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ea580c;
+            border-radius: 10px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        /* Hide/Show Logic */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-item.active {
+            color: #ea580c;
+            font-weight: 700;
+            border-bottom: 2px solid #ea580c;
+        }
+
+        /* Cart Badge Animation */
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .cart-bounce {
+            animation: bounce 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo / Brand -->
+                <div class="flex items-center cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-orange-600 text-white p-2 rounded-lg mr-2">
+                        <i class="ph ph-storefront text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-orange-700 leading-none">LS जनरल स्टोर</h1>
+                        <span class="text-xs text-gray-500">शुद्धता और विश्वास</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-6 text-lg font-medium">
+                    <a href="#" onclick="navigateTo('home')" id="nav-home" class="nav-item active hover:text-orange-600 px-2 py-1">मुख्य पृष्ठ</a>
+                    <a href="#" onclick="navigateTo('products')" id="nav-products" class="nav-item hover:text-orange-600 px-2 py-1">सभी सामान</a>
+                    <a href="#" onclick="navigateTo('about')" id="nav-about" class="nav-item hover:text-orange-600 px-2 py-1">दुकान के बारे में</a>
+                    <a href="#" onclick="navigateTo('contact')" id="nav-contact" class="nav-item hover:text-orange-600 px-2 py-1">संपर्क</a>
+                </nav>
+
+                <!-- Icons (Cart & Mobile Menu) -->
+                <div class="flex items-center gap-4">
+                    <!-- Cart Icon -->
+                    <div class="relative cursor-pointer" onclick="toggleCart()">
+                        <i class="ph ph-shopping-cart text-3xl text-gray-700 hover:text-orange-600"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden text-gray-700 focus:outline-none" onclick="toggleMobileMenu()">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <a href="#" onclick="navigateTo('home'); toggleMobileMenu()" class="block px-4 py-3 border-b hover:bg-orange-50 text-gray-700">🏠 मुख्य पृष्ठ (Home)</a>
+            <a href="#" onclick="navigateTo('products'); toggleMobileMenu()" class="block px-4 py-3 border-b hover:bg-orange-50 text-gray-700">🛍️ सभी सामान (Shop)</a>
+            <a href="#" onclick="navigateTo('about'); toggleMobileMenu()" class="block px-4 py-3 border-b hover:bg-orange-50 text-gray-700">ℹ️ हमारे बारे में (About)</a>
+            <a href="#" onclick="navigateTo('contact'); toggleMobileMenu()" class="block px-4 py-3 hover:bg-orange-50 text-gray-700">📞 संपर्क (Contact)</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="min-h-screen pb-20">
+
+        <!-- ================= HOME SECTION ================= -->
+        <section id="home" class="page-section active">
+            <!-- Hero Banner -->
+            <div class="relative bg-orange-600 text-white overflow-hidden">
+                <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center"></div>
+                <div class="container mx-auto px-4 py-12 md:py-20 relative z-10 text-center">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-4">आपकी दैनिक जरूरतों का <br/>एकमात्र स्थान</h2>
+                    <p class="text-lg md:text-xl mb-8 opacity-90">राशन, तेल, मसाले और घर का सारा सामान अब एक ही छत के नीचे।</p>
+                    <button onclick="navigateTo('products')" class="bg-white text-orange-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition transform hover:scale-105">
+                        अभी आर्डर करें <i class="ph-bold ph-arrow-right ml-2 inline-block align-middle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="container mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <i class="ph-duotone ph-seal-check text-4xl text-green-600 mb-2"></i>
+                    <h3 class="font-bold">शुद्ध सामान</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <i class="ph-duotone ph-currency-inr text-4xl text-orange-600 mb-2"></i>
+                    <h3 class="font-bold">किफायती दाम</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <i class="ph-duotone ph-package text-4xl text-blue-600 mb-2"></i>
+                    <h3 class="font-bold">ताजा स्टॉक</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <i class="ph-duotone ph-smiley text-4xl text-yellow-500 mb-2"></i>
+                    <h3 class="font-bold">भरोसेमंद सेवा</h3>
+                </div>
+            </div>
+
+            <!-- Top Categories -->
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">श्रेणियाँ (Categories)</h3>
+                    <button onclick="navigateTo('products')" class="text-orange-600 font-medium hover:underline">सभी देखें</button>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Category Card 1 -->
+                    <div onclick="filterCategory('rashan')" class="category-card cursor-pointer bg-orange-50 p-4 rounded-xl border border-orange-100 text-center">
+                        <img src="https://via.placeholder.com/150?text=Atta+Rice" alt="Rashan" class="w-24 h-24 mx-auto object-cover rounded-full mb-3 border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-lg text-gray-800">राशन (Atta/Rice)</h4>
+                    </div>
+                    <!-- Category Card 2 -->
+                    <div onclick="filterCategory('oil')" class="category-card cursor-pointer bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-center">
+                        <img src="https://via.placeholder.com/150?text=Oil+Ghee" alt="Oil" class="w-24 h-24 mx-auto object-cover rounded-full mb-3 border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-lg text-gray-800">तेल और घी</h4>
+                    </div>
+                    <!-- Category Card 3 -->
+                    <div onclick="filterCategory('spices')" class="category-card cursor-pointer bg-red-50 p-4 rounded-xl border border-red-100 text-center">
+                        <img src="https://via.placeholder.com/150?text=Masala" alt="Spices" class="w-24 h-24 mx-auto object-cover rounded-full mb-3 border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-lg text-gray-800">मसाले (Spices)</h4>
+                    </div>
+                     <!-- Category Card 4 -->
+                     <div onclick="filterCategory('daily')" class="category-card cursor-pointer bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                        <img src="https://via.placeholder.com/150?text=Soap+Paste" alt="Daily" class="w-24 h-24 mx-auto object-cover rounded-full mb-3 border-2 border-white shadow-sm">
+                        <h4 class="font-bold text-lg text-gray-800">दैनिक उपयोग</h4>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Popular Products Preview -->
+             <div class="container mx-auto px-4 py-8 bg-white rounded-t-3xl shadow-inner mt-4">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">लोकप्रिय उत्पाद</h3>
+                <div id="featured-products-container" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- JS will populate this -->
+                </div>
+             </div>
+        </section>
+
+        <!-- ================= PRODUCTS SECTION ================= -->
+        <section id="products" class="page-section">
+            <div class="bg-orange-600 text-white py-6 mb-6">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-3xl font-bold">हमारा स्टोर</h2>
+                    <p class="opacity-90">सबसे अच्छी कीमत, सबसे अच्छा सामान</p>
+                </div>
+            </div>
+
+            <div class="container mx-auto px-4">
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-2 mb-6 justify-center">
+                    <button onclick="filterProductDisplay('all')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-orange-600 hover:text-white text-sm font-medium transition active-filter" data-filter="all">सभी (All)</button>
+                    <button onclick="filterProductDisplay('rashan')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-orange-600 hover:text-white text-sm font-medium transition" data-filter="rashan">राशन</button>
+                    <button onclick="filterProductDisplay('oil')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-orange-600 hover:text-white text-sm font-medium transition" data-filter="oil">तेल/घी</button>
+                    <button onclick="filterProductDisplay('spices')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-orange-600 hover:text-white text-sm font-medium transition" data-filter="spices">मसाले</button>
+                    <button onclick="filterProductDisplay('snacks')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 hover:bg-orange-600 hover:text-white text-sm font-medium transition" data-filter="snacks">स्नैक्स</button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative mb-8 max-w-md mx-auto">
+                    <input type="text" id="search-input" onkeyup="searchProducts()" placeholder="सामान खोजें (जैसे: चीनी, तेल...)" class="w-full p-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-orange-500 shadow-sm">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-xl"></i>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="all-products-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABOUT SECTION ================= -->
+        <section id="about" class="page-section">
+            <div class="container mx-auto px-4 py-12">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 bg-gray-200">
+                             <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Village Shop" class="w-full h-64 md:h-full object-cover">
+                        </div>
+                        <div class="md:w-1/2 p-8">
+                            <h2 class="text-3xl font-bold text-orange-700 mb-4">LS जनरल स्टोर के बारे में</h2>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                हमारे गाँव की अपनी दुकान, <strong>"LS जनरल स्टोर" (गुमटी)</strong> में आपका स्वागत है। हमने यह दुकान इस सोच के साथ शुरू की थी कि हमारे गाँव के लोगों को अच्छी क्वालिटी का सामान खरीदने के लिए शहर न जाना पड़े।
+                            </p>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                हम सुनिश्चित करते हैं कि आपको शुद्ध तेल, चीनी, दालें और दैनिक उपयोग की सभी वस्तुएं उचित मूल्य पर मिलें। आपका भरोसा ही हमारी कमाई है।
+                            </p>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="border-l-4 border-orange-500 pl-4">
+                                    <h4 class="font-bold text-lg">100% शुद्ध</h4>
+                                    <p class="text-sm text-gray-500">मिलावट मुक्त सामान</p>
+                                </div>
+                                <div class="border-l-4 border-orange-500 pl-4">
+                                    <h4 class="font-bold text-lg">उचित दाम</h4>
+                                    <p class="text-sm text-gray-500">बाजार से सस्ता</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Owner Message -->
+                <div class="mt-12 text-center">
+                    <div class="inline-block p-1 rounded-full border-2 border-orange-200 mb-4">
+                        <img src="https://via.placeholder.com/100?text=Owner" class="rounded-full w-24 h-24">
+                    </div>
+                    <blockquote class="text-xl italic text-gray-700 font-medium">
+                        "ग्राहक हमारे लिए भगवान समान है। हम सेवा में कोई कमी नहीं छोड़ते।"
+                    </blockquote>
+                    <p class="mt-2 text-orange-600 font-bold">- प्रो. (Proprietor)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CONTACT SECTION ================= -->
+        <section id="contact" class="page-section">
+             <div class="container mx-auto px-4 py-12">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">संपर्क करें</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <!-- Contact Info -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-start mb-6">
+                            <div class="bg-orange-100 p-3 rounded-full text-orange-600 mr-4">
+                                <i class="ph-fill ph-map-pin text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">पता (Address)</h3>
+                                <p class="text-gray-600">LS जनरल स्टोर (गुमटी),<br>मेन रोड, गाँव [गाँव का नाम],<br>जिला [जिला का नाम], भारत</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start mb-6">
+                            <div class="bg-green-100 p-3 rounded-full text-green-600 mr-4">
+                                <i class="ph-fill ph-whatsapp-logo text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">WhatsApp / फ़ोन</h3>
+                                <p class="text-gray-600">+91 98765 43210</p>
+                                <p class="text-xs text-gray-500">सुबह 8 बजे से रात 9 बजे तक</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-full text-blue-600 mr-4">
+                                <i class="ph-fill ph-envelope text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">ईमेल</h3>
+                                <p class="text-gray-600">contact@lsgeneralstore.com</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Form -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-bold text-xl mb-4">हमें सन्देश भेजें</h3>
+                        <form onsubmit="event.preventDefault(); alert('आपका संदेश भेज दिया गया है!');">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">नाम</label>
+                                <input type="text" class="w-full p-2 border rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">मोबाइल नंबर</label>
+                                <input type="tel" class="w-full p-2 border rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">संदेश</label>
+                                <textarea class="w-full p-2 border rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700 transition">भेजें</button>
+                        </form>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    </main>
+
+    <!-- CART SLIDE-OVER / MODAL -->
+    <div id="cart-modal" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-50 transition-opacity" onclick="toggleCart()"></div>
+        
+        <!-- Cart Content -->
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 translate-x-full flex flex-col" id="cart-content">
+            
+            <!-- Header -->
+            <div class="p-4 bg-orange-600 text-white flex justify-between items-center shadow-md">
+                <h2 class="text-xl font-bold flex items-center"><i class="ph ph-shopping-cart mr-2"></i> आपका झोला (Cart)</h2>
+                <button onclick="toggleCart()" class="hover:bg-orange-700 p-1 rounded"><i class="ph ph-x text-2xl"></i></button>
+            </div>
+
+            <!-- Items Area (Scrollable) -->
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                <!-- Cart items will be injected here -->
+                <div class="text-center text-gray-500 mt-10">
+                    <i class="ph ph-basket text-6xl mb-2 opacity-50"></i>
+                    <p>आपका झोला खाली है</p>
+                    <button onclick="toggleCart(); navigateTo('products')" class="mt-4 text-orange-600 font-bold hover:underline">सामान जोड़ें</button>
+                </div>
+            </div>
+
+            <!-- Footer (Total & Checkout) -->
+            <div class="p-4 bg-white border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div class="flex justify-between items-center mb-4 text-lg font-bold text-gray-800">
+                    <span>कुल राशि (Total):</span>
+                    <span id="cart-total">₹0</span>
+                </div>
+                <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center shadow-lg transition transform active:scale-95">
+                    <i class="ph-fill ph-whatsapp-logo text-xl mr-2"></i> WhatsApp पर आर्डर भेजें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-800 text-white pt-10 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 mb-8 border-b border-gray-700 pb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-orange-400 mb-4">LS जनरल स्टोर</h3>
+                    <p class="text-gray-400 text-sm">गाँव के विकास में हमारा छोटा सा योगदान। शुद्ध सामान, सही दाम।</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">त्वरित लिंक</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" onclick="navigateTo('home')" class="hover:text-white">मुख्य पृष्ठ</a></li>
+                        <li><a href="#" onclick="navigateTo('products')" class="hover:text-white">सामान खरीदें</a></li>
+                        <li><a href="#" onclick="navigateTo('about')" class="hover:text-white">हमारे बारे में</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">संपर्क</h3>
+                    <p class="text-gray-400 text-sm mb-2"><i class="ph-fill ph-phone mr-2"></i> +91 98765 43210</p>
+                    <p class="text-gray-400 text-sm"><i class="ph-fill ph-map-pin mr-2"></i> मेन मार्केट, गाँव का नाम</p>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-500">
+                &copy; 2023 LS जनरल स्टोर. सर्वाधिकार सुरक्षित.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ============ DATA STORE ============
+        const products = [
+            // --- RASHAN (Staples) ---
+            { id: 1, name: "आशीर्वाद आटा (10kg)", price: 420, category: "rashan", image: "https://images.unsplash.com/photo-1627485937980-221c88ac04f9?auto=format&fit=crop&w=300&q=80" },
+            { id: 2, name: "बासमती चावल (1kg)", price: 90, category: "rashan", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80" },
+            { id: 3, name: "अरहर दाल (1kg)", price: 140, category: "rashan", image: "https://images.unsplash.com/photo-1585996656661-38a5c02ce0e1?auto=format&fit=crop&w=300&q=80" },
+            { id: 4, name: "चना दाल (1kg)", price: 90, category: "rashan", image: "https://images.unsplash.com/photo-1515543904379-3d757afe726e?auto=format&fit=crop&w=300&q=80" },
+            { id: 5, name: "मधुर चीनी (1kg)", price: 45, category: "rashan", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=300&q=80" },
+            { id: 6, name: "टाटा नमक (1kg)", price: 28, category: "rashan", image: "https://images.unsplash.com/photo-1518110925495-59b1932249d8?auto=format&fit=crop&w=300&q=80" },
+            { id: 7, name: "टाटा टी गोल्ड (250g)", price: 130, category: "rashan", image: "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=300&q=80" },
+            { id: 8, name: "सूजी (500g)", price: 35, category: "rashan", image: "https://images.unsplash.com/photo-1630613604735-1f996ae4b057?auto=format&fit=crop&w=300&q=80" },
+
+            // --- OIL & GHEE ---
+            { id: 20, name: "फॉर्च्यून सरसों तेल (1L)", price: 155, category: "oil", image: "https://images.unsplash.com/photo-1474979266404-7caddbcd4d4a?auto=format&fit=crop&w=300&q=80" },
+            { id: 21, name: "रिफाइंड सोयाबीन तेल (1L)", price: 140, category: "oil", image: "https://images.unsplash.com/photo-1620893686465-83c95a24c15f?auto=format&fit=crop&w=300&q=80" },
+            { id: 22, name: "देसी घी (500ml)", price: 350, category: "oil", image: "https://images.unsplash.com/photo-1631378090737-f991db8c6486?auto=format&fit=crop&w=300&q=80" },
+            { id: 23, name: "नारियल तेल (175ml)", price: 85, category: "oil", image: "https://images.unsplash.com/photo-1627660445418-0881849ba196?auto=format&fit=crop&w=300&q=80" },
+
+            // --- SPICES ---
+            { id: 40, name: "हल्दी पाउडर (100g)", price: 35, category: "spices", image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=300&q=80" },
+            { id: 41, name: "लाल मिर्च पाउडर (100g)", price: 45, category: "spices", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=300&q=80" },
+            { id: 42, name: "धनिया पाउडर (100g)", price: 30, category: "spices", image: "https://images.unsplash.com/photo-1564417459-259949405b35?auto=format&fit=crop&w=300&q=80" },
+            { id: 43, name: "गरम मसाला (50g)", price: 40, category: "spices", image: "https://images.unsplash.com/photo-1532336414038-51792328370f?auto=format&fit=crop&w=300&q=80" },
+            { id: 44, name: "जीरा (100g)", price: 60, category: "spices", image: "https://images.unsplash.com/photo-1599940824399-b87987ce172a?auto=format&fit=crop&w=300&q=80" },
+
+            // --- SNACKS & BISCUITS ---
+            { id: 60, name: "पारले-जी बिस्किट", price: 5, category: "snacks", image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+            { id: 61, name: "गुड-डे बिस्किट", price: 20, category: "snacks", image: "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?auto=format&fit=crop&w=300&q=80" },
+            { id: 62, name: "मैगी नूडल्स (छोटा)", price: 14, category: "snacks", image: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=300&q=80" },
+            { id: 63, name: "हल्दीराम भुजिया", price: 50, category: "snacks", image: "https://images.unsplash.com/photo-1621856550454-bf88879291f7?auto=format&fit=crop&w=300&q=80" },
+            { id: 64, name: "लेज़ चिप्स (Lays)", price: 20, category: "snacks", image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=300&q=80" },
+            { id: 65, name: "कच्चा आम टॉफ़ी (Pkt)", price: 50, category: "snacks", image: "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&w=300&q=80" },
+            { id: 66, name: "डेयरी मिल्क चॉकलेट", price: 20, category: "snacks", image: "https://images.unsplash.com/photo-1623242976427-f6248791e32d?auto=format&fit=crop&w=300&q=80" },
+
+            // --- DAILY NEEDS (Soap, cleaning, etc) ---
+            { id: 80, name: "लक्स साबुन (Lux)", price: 35, category: "daily", image: "https://images.unsplash.com/photo-1600694807883-26258c879f6e?auto=format&fit=crop&w=300&q=80" },
+            { id: 81, name: "डेटॉल साबुन", price: 38, category: "daily", image: "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?auto=format&fit=crop&w=300&q=80" },
+            { id: 82, name: "कपड़े धोने का साबुन", price: 15, category: "daily", image: "https://images.unsplash.com/photo-1550963295-019d8a8a61c5?auto=format&fit=crop&w=300&q=80" },
+            { id: 83, name: "सर्फ एक्सेल (500g)", price: 65, category: "daily", image: "https://images.unsplash.com/photo-1527661591475-527312dd65f5?auto=format&fit=crop&w=300&q=80" },
+            { id: 84, name: "विम बार (Vim Bar)", price: 20, category: "daily", image: "https://images.unsplash.com/photo-1585303606239-244e73378783?auto=format&fit=crop&w=300&q=80" },
+            { id: 85, name: "कोलगेट टूथपेस्ट", price: 55, category: "daily", image: "https://images.unsplash.com/photo-1559304787-945aa4341065?auto=format&fit=crop&w=300&q=80" },
+            { id: 86, name: "शैम्पू पाउच (लड़ी)", price: 50, category: "daily", image: "https://images.unsplash.com/photo-1629198728243-42c0e1e617db?auto=format&fit=crop&w=300&q=80" },
+            { id: 87, name: "हेयर ऑयल (आंवला)", price: 45, category: "daily", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" },
+            { id: 88, name: "माचिस (Matchbox)", price: 1, category: "daily", image: "https://images.unsplash.com/photo-1520367445093-504687712a6d?auto=format&fit=crop&w=300&q=80" },
+            { id: 89, name: "मोमबत्ती (Candle)", price: 10, category: "daily", image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=300&q=80" },
+            { id: 90, name: "मच्छर अगरबत्ती (Coil)", price: 40, category: "daily", image: "https://images.unsplash.com/photo-1564510714747-6d32470c7c58?auto=format&fit=crop&w=300&q=80" },
+        ];
+
+        let cart = [];
+
+        // ============ NAVIGATION LOGIC ============
+        function navigateTo(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            // Show target section
+            const target = document.getElementById(pageId);
+            if(target) target.classList.add('active');
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const activeNav = document.getElementById('nav-' + pageId);
+            if(activeNav) activeNav.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+
+            // If navigating to products, reset filter
+            if(pageId === 'products') {
+                filterProductDisplay('all');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // ============ PRODUCT DISPLAY LOGIC ============
+        function createProductCard(product) {
+            return `
+                <div class="product-card bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md flex flex-col overflow-hidden">
+                    <div class="relative h-40 bg-gray-100 overflow-hidden">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                        <span class="absolute top-2 right-2 bg-white text-xs px-2 py-1 rounded font-bold shadow text-gray-600 uppercase">${product.category}</span>
+                    </div>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h4 class="font-bold text-gray-800 line-clamp-2 mb-1">${product.name}</h4>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-lg font-bold text-orange-600">₹${product.price}</span>
+                            <button onclick="addToCart(${product.id})" class="bg-orange-100 text-orange-700 hover:bg-orange-600 hover:text-white p-2 rounded-lg transition">
+                                <i class="ph-bold ph-plus"></i> जोड़ें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProducts(filter = 'all', searchTerm = '') {
+            const container = document.getElementById('all-products-container');
+            container.innerHTML = '';
+
+            let filtered = products;
+
+            if (filter !== 'all') {
+                filtered = filtered.filter(p => p.category === filter);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">कोई सामान नहीं मिला।</div>`;
+                return;
+            }
+
+            filtered.forEach(product => {
+                container.innerHTML += createProductCard(product);
+            });
+        }
+
+        function filterProductDisplay(category) {
+            // Update UI buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-600', 'text-white');
+                btn.classList.add('bg-gray-200');
+                if(btn.dataset.filter === category) {
+                    btn.classList.remove('bg-gray-200');
+                    btn.classList.add('bg-orange-600', 'text-white');
+                }
+            });
+            renderProducts(category);
+        }
+
+        // Category Click from Home Page redirects to Shop with filter
+        function filterCategory(cat) {
+            navigateTo('products');
+            filterProductDisplay(cat);
+        }
+
+        function searchProducts() {
+            const term = document.getElementById('search-input').value;
+            renderProducts('all', term);
+        }
+
+        // Populate Home Page Featured
+        function loadFeatured() {
+            const container = document.getElementById('featured-products-container');
+            // Just show first 4 items
+            products.slice(0, 4).forEach(product => {
+                container.innerHTML += createProductCard(product);
+            });
+        }
+
+        // ============ CART LOGIC ============
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            const content = document.getElementById('cart-content');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('translate-x-full');
+                }, 10);
+                renderCart();
+            } else {
+                content.classList.add('translate-x-full');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCartCount();
+            
+            // Visual Feedback
+            const badge = document.getElementById('cart-count');
+            badge.classList.add('cart-bounce');
+            setTimeout(() => badge.classList.remove('cart-bounce'), 300);
+            
+            // If cart is open, re-render
+            if(!document.getElementById('cart-modal').classList.contains('hidden')){
+                renderCart();
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartCount();
+            renderCart();
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    renderCart();
+                    updateCartCount();
+                }
+            }
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 mt-10">
+                        <i class="ph ph-basket text-6xl mb-2 opacity-50"></i>
+                        <p>आपका झोला खाली है</p>
+                        <button onclick="toggleCart(); navigateTo('products')" class="mt-4 text-orange-600 font-bold hover:underline">सामान जोड़ें</button>
+                    </div>`;
+                document.getElementById('cart-total').innerText = "₹0";
+                return;
+            }
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                container.innerHTML += `
+                    <div class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                        <img src="${item.image}" class="w-12 h-12 object-cover rounded mr-3">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm text-gray-800">${item.name}</h4>
+                            <p class="text-xs text-gray-500">₹${item.price} x ${item.qty}</p>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="font-bold text-orange-600 mb-1">₹${itemTotal}</span>
+                            <div class="flex items-center bg-gray-100 rounded">
+                                <button onclick="updateQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:text-red-500">-</button>
+                                <span class="text-xs font-bold px-1">${item.qty}</span>
+                                <button onclick="updateQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-600 hover:text-green-500">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-total').innerText = "₹" + total;
+        }
+
+        // ============ CHECKOUT LOGIC ============
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                alert("पहले झोले में कुछ सामान डालें!");
+                return;
+            }
+
+            let message = "*नमस्ते LS General Store, मेरा आर्डर ले लीजिये:*\n\n";
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                message += `${index + 1}. ${item.name} x ${item.qty} = ₹${itemTotal}\n`;
+            });
+
+            message += `\n*कुल राशि: ₹${total}*`;
+            message += "\n\nकृपया सामान पैक रखें। मैं लेने आ रहा हूँ।";
+
+            // Encode the message for URL
+            const encodedMsg = encodeURIComponent(message);
+            // Replace this number with the shopkeeper's actual WhatsApp number
+            const phoneNumber = "919876543210"; 
+            
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMsg}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ============ INITIALIZATION ============
+        window.onload = function() {
+            renderProducts();
+            loadFeatured();
+        };
+
+    </script>
+</body>
+</html>
